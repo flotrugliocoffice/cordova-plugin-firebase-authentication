@@ -47,6 +47,16 @@ public class FirebaseAuthenticationPlugin extends ReflectiveCordovaPlugin implem
     }
 
     @CordovaMethod
+        private void getCurrentUser(boolean forceRefresh, final CallbackContext callbackContext) {
+            FirebaseUser user = firebaseAuth.getCurrentUser();
+            if (user == null) {
+                callbackContext.error("User is not authorized");
+            } else {
+                callbackContext.success(getProfileData(firebaseAuth.getCurrentUser()));
+            }
+        }
+
+    @CordovaMethod
     private void getIdToken(boolean forceRefresh, final CallbackContext callbackContext) {
         FirebaseUser user = firebaseAuth.getCurrentUser();
 

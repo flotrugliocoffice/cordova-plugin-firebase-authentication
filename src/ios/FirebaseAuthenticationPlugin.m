@@ -11,6 +11,17 @@
     }
 }
 
+- (void)getCurrentUser:(CDVInvokedUrlCommand *)command {
+    FIRUser *user = [FIRAuth auth].currentUser;
+    if (user) {
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[self userToDictionary:user]];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    } else {
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"User must be signed in"];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+}
+
 - (void)getIdToken:(CDVInvokedUrlCommand *)command {
     BOOL forceRefresh = [[command.arguments objectAtIndex:0] boolValue];
     FIRUser *user = [FIRAuth auth].currentUser;
