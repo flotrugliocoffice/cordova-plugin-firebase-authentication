@@ -11,18 +11,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/chemerisuk/cordova-plugin-firebase-authentication.git"
+    "url": "git+https://github.com/flotrugliocoffice/cordova-plugin-firebase-authentication.git"
   },
-  "author": "Maksim Chemerisuk <chemerisuk@gmail.com> (https://github.com/chemerisuk)",
+  "author": "Francesco Lo Truglio <flotruglio@cofficegroup.com> (https://www.cofficegroup.com)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/chemerisuk/cordova-plugin-firebase-authentication/issues"
+    "url": "https://github.com/flotrugliocoffice/cordova-plugin-firebase-authentication/issues"
   },
   "scripts": {
     "version": "replace -s 'version=\"(.+)(?=\">)' 'version=\"'$npm_package_version plugin.xml && git add plugin.xml",
     "postversion": "git push && git push --tags"
   },
-  "homepage": "https://github.com/chemerisuk/cordova-plugin-firebase-authentication#readme",
+  "homepage": "https://github.com/flotrugliocoffice/cordova-plugin-firebase-authentication#readme",
   "keywords": [
     "cordova",
     "firebase",
