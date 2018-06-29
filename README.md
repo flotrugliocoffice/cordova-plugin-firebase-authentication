@@ -1,9 +1,14 @@
-# cordova-plugin-firebase-authentication<br>[![NPM version][npm-version]][npm-url] [![NPM downloads][npm-downloads]][npm-url]
-> Cordova plugin for [Firebase Authentication](https://firebase.google.com/docs/auth/)
+# cordova-plugin-firebase-authentication-db<br>[![NPM version][npm-version]][npm-url] [![NPM downloads][npm-downloads]][npm-url]
+> Cordova plugin for [Firebase Authentication and Dabase storage](https://firebase.google.com/docs/auth/)
+
+## Introduction
+Cordova plugin for Firebase Authentication and DatabaseStorage forked from cordova-plugin-firebase-authentication, 
+this plugins add some feature to the base plugin as listed below.
+
 
 ## Installation
 
-    cordova plugin add cordova-plugin-firebase-authentication --save
+    cordova plugin add cordova-plugin-firebase-authentication-db --save
 
 Use variable `FIREBASE_AUTH_VERSION` to override dependency version on Android.
 
@@ -16,6 +21,14 @@ To use phone number authentication on iOS, your app must be able to receive sile
 
 ## Methods
 Every method call returns a promise which is optionally fulfilled with an appropriate value.
+
+### getCurrentUser()
+Returns a JWT Current authenticated user to a Firebase service.
+```js
+cordova.plugins.firebase.auth.getCurrentUser().then(function(idToken) {
+    // get current authenticated user
+});
+```
 
 ### getIdToken(_forceRefresh_)
 Returns a JWT token used to identify the user to a Firebase service.

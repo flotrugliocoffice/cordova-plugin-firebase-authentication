@@ -1,14 +1,14 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
 xmlns:android="http://schemas.android.com/apk/res/android"
-           id="cordova-plugin-firebase-authentication"
-      version="1.0.1">
+           id="cordova-plugin-firebase-authentication-db"
+      version="1.0.0">
 
-    <name>cordova-plugin-firebase-authentication</name>
-    <description>Cordova plugin for Firebase Authentication</description>
+    <name>cordova-plugin-firebase-authentication-db</name>
+    <description>Cordova plugin for Firebase Authentication and DatabaseStorage forked from cordova-plugin-firebase-authentication</description>
     <license>MIT</license>
     <keywords>cordova</keywords>
-    <repo>https://github.com/chemerisuk/cordova-plugin-firebase-authentication</repo>
-    <issue>https://github.com/chemerisuk/cordova-plugin-firebase-authentication/issues</issue>
+    <repo>https://github.com/flotrugliocoffice/cordova-plugin-firebase-authentication</repo>
+    <issue>https://github.com/flotrugliocoffice/cordova-plugin-firebase-authentication/issues</issue>
 
     <js-module src="www/FirebaseAuthentication.js" name="FirebaseAuthentication">
         <merges target="cordova.plugins.firebase.auth" />
