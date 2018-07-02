@@ -8,6 +8,7 @@
 
     if(![FIRApp defaultApp]) {
         [FIRApp configure];
+        [FIRDatabase database].persistenceEnabled = YES;
     }
 }
 
@@ -17,7 +18,6 @@
     if (user) {
         NSString* uid = user.uid;
         FIRDatabaseReference *db;
-        [FIRDatabase database].persistenceEnabled = YES;
         db = [[FIRDatabase database] reference];
         [[[db child:@"credits"] child:uid] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
 
@@ -43,7 +43,6 @@
         NSDictionary* dataToBeStored = [command.arguments objectAtIndex:0];
         NSString* uid = user.uid;
         FIRDatabaseReference *db;
-        [FIRDatabase database].persistenceEnabled = YES;
         db = [[FIRDatabase database] reference];
         [[[db child:@"credits"] child:uid] setValue:dataToBeStored];
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"OK"];
