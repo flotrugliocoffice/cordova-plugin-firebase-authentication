@@ -2,6 +2,17 @@ var exec = require("cordova/exec");
 var PLUGIN_NAME = "FirebaseAuthentication";
 
 module.exports = {
+
+    getDataInFirebase: function() {
+        return new Promise(function(resolve, reject) {
+            exec(resolve, reject, PLUGIN_NAME, "getDataInFirebase", []);
+        });
+    },
+    storeDataInFirebase: function(data) {
+        return new Promise(function(resolve, reject) {
+            exec(resolve, reject, PLUGIN_NAME, "storeDataInFirebase", [data]);
+        });
+    },
     getCurrentUser: function() {
         return new Promise(function(resolve, reject) {
             exec(resolve, reject, PLUGIN_NAME, "getCurrentUser", []);

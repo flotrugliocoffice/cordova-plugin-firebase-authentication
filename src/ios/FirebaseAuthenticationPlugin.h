@@ -2,6 +2,8 @@
 
 @interface FirebaseAuthenticationPlugin : CDVPlugin
 
+-(void)getDataInFirebase:(CDVInvokedUrlCommand *)command;
+-(void)storeDataInFirebase:(CDVInvokedUrlCommand *)command;
 - (void)getCurrentUser:(CDVInvokedUrlCommand*)command;
 - (void)getIdToken:(CDVInvokedUrlCommand*)command;
 - (void)createUserWithEmailAndPassword:(CDVInvokedUrlCommand*)command;
