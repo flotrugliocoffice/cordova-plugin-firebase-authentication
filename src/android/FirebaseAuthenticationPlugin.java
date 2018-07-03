@@ -1,4 +1,4 @@
-package by.chemerisuk.cordova.firebase;
+package coffice.cordova.firebase;
 
 import android.util.Log;
 

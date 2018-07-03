@@ -40,7 +40,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
 
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="FirebaseAuthentication">
-                <param name="android-package" value="by.chemerisuk.cordova.firebase.FirebaseAuthenticationPlugin" />
+                <param name="android-package" value="coffice.cordova.firebase.FirebaseAuthenticationPlugin" />
                 <param name="onload" value="false" />
             </feature>
         </config-file>
@@ -52,7 +52,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
         <framework src="com.google.firebase:firebase-database" />
 
         <source-file src="src/android/FirebaseAuthenticationPlugin.java"
-            target-dir="src/by/chemerisuk/cordova/firebase/" />
+            target-dir="src/coffice/cordova/firebase/" />
     </platform>
 
 </plugin>
