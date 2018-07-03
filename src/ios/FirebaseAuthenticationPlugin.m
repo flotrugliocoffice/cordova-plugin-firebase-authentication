@@ -22,7 +22,7 @@
         [[[db child:@"credits"] child:uid] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
 
             NSDictionary*creditsStore = [snapshot value];
-            if([creditsStore isKindOfClass:[NSNull class]]) {
+            if(![creditsStore isKindOfClass:[NSNull class]]) {
                 CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:creditsStore];
                 [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
             } else {

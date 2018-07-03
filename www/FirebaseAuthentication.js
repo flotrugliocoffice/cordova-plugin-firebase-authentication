@@ -3,97 +3,97 @@ var PLUGIN_NAME = "FirebaseAuthentication";
 
 module.exports = {
 
-    getDataInFirebase: function() {
-        return new Promise(function(resolve, reject) {
+    getDataInFirebase: function () {
+        return new Promise(function (resolve, reject) {
             exec(resolve, reject, PLUGIN_NAME, "getDataInFirebase", []);
         });
     },
-    storeDataInFirebase: function(data) {
-        return new Promise(function(resolve, reject) {
+    storeDataInFirebase: function (data) {
+        return new Promise(function (resolve, reject) {
             exec(resolve, reject, PLUGIN_NAME, "storeDataInFirebase", [data]);
         });
     },
-    getCurrentUser: function() {
-        return new Promise(function(resolve, reject) {
+    getCurrentUser: function () {
+        return new Promise(function (resolve, reject) {
             exec(resolve, reject, PLUGIN_NAME, "getCurrentUser", []);
         });
     },
-    getIdToken: function(forceRefresh) {
-        return new Promise(function(resolve, reject) {
+    getIdToken: function (forceRefresh) {
+        return new Promise(function (resolve, reject) {
             if (forceRefresh == null) forceRefresh = false;
 
             exec(resolve, reject, PLUGIN_NAME, "getIdToken", [forceRefresh]);
         });
     },
-    createUserWithEmailAndPassword: function(email, password) {
-        return new Promise(function(resolve, reject) {
+    createUserWithEmailAndPassword: function (email, password) {
+        return new Promise(function (resolve, reject) {
             exec(resolve, reject, PLUGIN_NAME, "createUserWithEmailAndPassword", [email, password]);
         });
     },
-    sendEmailVerification: function() {
-        return new Promise(function(resolve, reject) {
+    sendEmailVerification: function () {
+        return new Promise(function (resolve, reject) {
             exec(resolve, reject, PLUGIN_NAME, "sendEmailVerification", []);
         });
     },
-    sendPasswordResetEmail: function(email) {
-        return new Promise(function(resolve, reject) {
+    sendPasswordResetEmail: function (email) {
+        return new Promise(function (resolve, reject) {
             exec(resolve, reject, PLUGIN_NAME, "sendPasswordResetEmail", [email]);
         });
     },
-    signInWithEmailAndPassword: function(email, password) {
-        return new Promise(function(resolve, reject) {
+    signInWithEmailAndPassword: function (email, password) {
+        return new Promise(function (resolve, reject) {
             exec(resolve, reject, PLUGIN_NAME, "signInWithEmailAndPassword", [email, password]);
         });
     },
-    signInAnonymously: function(email, password) {
-        return new Promise(function(resolve, reject) {
+    signInAnonymously: function (email, password) {
+        return new Promise(function (resolve, reject) {
             exec(resolve, reject, PLUGIN_NAME, "signInAnonymously", []);
         });
     },
-    signInWithGoogle: function(idToken, accessToken) {
-        return new Promise(function(resolve, reject) {
+    signInWithGoogle: function (idToken, accessToken) {
+        return new Promise(function (resolve, reject) {
             exec(resolve, reject, PLUGIN_NAME, "signInWithGoogle", [idToken, accessToken]);
         });
     },
-    signInWithFacebook: function(accessToken) {
-        return new Promise(function(resolve, reject) {
+    signInWithFacebook: function (accessToken) {
+        return new Promise(function (resolve, reject) {
             exec(resolve, reject, PLUGIN_NAME, "signInWithFacebook", [accessToken]);
         });
     },
-    signInWithTwitter: function(token, secret) {
-        return new Promise(function(resolve, reject) {
+    signInWithTwitter: function (token, secret) {
+        return new Promise(function (resolve, reject) {
             exec(resolve, reject, PLUGIN_NAME, "signInWithTwitter", [token, secret]);
         });
     },
-    verifyPhoneNumber: function(phoneNumber, timeoutMillis) {
-        return new Promise(function(resolve, reject) {
+    verifyPhoneNumber: function (phoneNumber, timeoutMillis) {
+        return new Promise(function (resolve, reject) {
             exec(resolve, reject, PLUGIN_NAME, "verifyPhoneNumber", [phoneNumber, timeoutMillis]);
         });
     },
-    signInWithVerificationId: function(verificationId, code) {
-        return new Promise(function(resolve, reject) {
+    signInWithVerificationId: function (verificationId, code) {
+        return new Promise(function (resolve, reject) {
             exec(resolve, reject, PLUGIN_NAME, "signInWithVerificationId", [verificationId, code]);
         });
     },
-    signOut: function() {
-        return new Promise(function(resolve, reject) {
+    signOut: function () {
+        return new Promise(function (resolve, reject) {
             exec(resolve, reject, PLUGIN_NAME, "signOut", []);
         });
     },
-    setLanguageCode: function(languageCode) {
-        return new Promise(function(resolve, reject) {
+    setLanguageCode: function (languageCode) {
+        return new Promise(function (resolve, reject) {
             exec(resolve, reject, PLUGIN_NAME, "setLanguageCode", [languageCode]);
         });
     },
-    useAppLanguage: function() {
-        return new Promise(function(resolve, reject) {
+    useAppLanguage: function () {
+        return new Promise(function (resolve, reject) {
             exec(resolve, reject, PLUGIN_NAME, "setLanguageCode", [null]);
         });
     },
-    onAuthStateChanged: function(callback) {
+    onAuthStateChanged: function (callback) {
         exec(callback, null, PLUGIN_NAME, "setAuthStateChanged", [false]);
 
-        return function() {
+        return function () {
             exec(null, null, PLUGIN_NAME, "setAuthStateChanged", [true]);
         };
     }
