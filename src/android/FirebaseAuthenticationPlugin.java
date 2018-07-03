@@ -1,5 +1,6 @@
 package coffice.cordova.firebase;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import by.chemerisuk.cordova.support.CordovaMethod;
@@ -19,13 +20,23 @@ import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.auth.TwitterAuthProvider;
 import com.google.firebase.FirebaseException;
-
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.PluginResult;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
@@ -40,21 +51,61 @@ public class FirebaseAuthenticationPlugin extends ReflectiveCordovaPlugin implem
 
     @Override
     protected void pluginInitialize() {
-        Log.d(TAG, "Starting Firebase Authentication plugin");
-
+        Log.d(TAG, "[Coffice] Starting Firebase Authentication plugin");
         this.firebaseAuth = FirebaseAuth.getInstance();
         this.phoneAuthProvider = PhoneAuthProvider.getInstance();
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
     }
 
     @CordovaMethod
-        private void getCurrentUser(boolean forceRefresh, final CallbackContext callbackContext) {
-            FirebaseUser user = firebaseAuth.getCurrentUser();
-            if (user == null) {
-                callbackContext.error("User is not authorized");
-            } else {
-                callbackContext.success(getProfileData(firebaseAuth.getCurrentUser()));
+    private void getDataInFirebase(final CallbackContext callbackContext) {
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        if (user == null) {
+            callbackContext.error("User is not authorized");
+        } else {
+            String uid = user.getUid();
+            DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+            mDatabase.child("credits").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Map<String, String> value = (Map<String, String>) dataSnapshot.getValue();
+                    callbackContext.success(new JSONObject(value));
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    callbackContext.error("No Data");
+                }
+            });
+        }
+    }
+
+    @CordovaMethod
+    private void storeDataInFirebase(JSONObject store, final CallbackContext callbackContext) {
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        if (user == null) {
+            callbackContext.error("User is not authorized");
+        } else {
+            String uid = user.getUid();
+            DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+            try {
+                mDatabase.child("credits").child(uid).setValue(jsonToMap(store));
+                callbackContext.success("OK");
+            } catch (JSONException err) {
+                callbackContext.error(err.getMessage());
             }
         }
+    }
+
+    @CordovaMethod
+    private void getCurrentUser(boolean forceRefresh, final CallbackContext callbackContext) {
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        if (user == null) {
+            callbackContext.error("User is not authorized");
+        } else {
+            callbackContext.success(getProfileData(firebaseAuth.getCurrentUser()));
+        }
+    }
 
     @CordovaMethod
     private void getIdToken(boolean forceRefresh, final CallbackContext callbackContext) {
@@ -64,16 +115,16 @@ public class FirebaseAuthenticationPlugin extends ReflectiveCordovaPlugin implem
             callbackContext.error("User is not authorized");
         } else {
             user.getIdToken(forceRefresh)
-                .addOnCompleteListener(cordova.getActivity(), new OnCompleteListener<GetTokenResult>() {
-                    @Override
-                    public void onComplete(Task<GetTokenResult> task) {
-                        if (task.isSuccessful()) {
-                            callbackContext.success(task.getResult().getToken());
-                        } else {
-                            callbackContext.error(task.getException().getMessage());
+                    .addOnCompleteListener(cordova.getActivity(), new OnCompleteListener<GetTokenResult>() {
+                        @Override
+                        public void onComplete(Task<GetTokenResult> task) {
+                            if (task.isSuccessful()) {
+                                callbackContext.success(task.getResult().getToken());
+                            } else {
+                                callbackContext.error(task.getException().getMessage());
+                            }
                         }
-                    }
-                });
+                    });
         }
     }
 
@@ -82,7 +133,7 @@ public class FirebaseAuthenticationPlugin extends ReflectiveCordovaPlugin implem
         this.signinCallback = callbackContext;
 
         firebaseAuth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener(cordova.getActivity(), this);
+                .addOnCompleteListener(cordova.getActivity(), this);
     }
 
     @CordovaMethod
@@ -93,6 +144,22 @@ public class FirebaseAuthenticationPlugin extends ReflectiveCordovaPlugin implem
             callbackContext.error("User is not authorized");
         } else {
             user.sendEmailVerification()
+                    .addOnCompleteListener(cordova.getActivity(), new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                callbackContext.success();
+                            } else {
+                                callbackContext.error(task.getException().getMessage());
+                            }
+                        }
+                    });
+        }
+    }
+
+    @CordovaMethod
+    private void sendPasswordResetEmail(String email, final CallbackContext callbackContext) {
+        firebaseAuth.sendPasswordResetEmail(email)
                 .addOnCompleteListener(cordova.getActivity(), new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(Task<Void> task) {
@@ -103,22 +170,6 @@ public class FirebaseAuthenticationPlugin extends ReflectiveCordovaPlugin implem
                         }
                     }
                 });
-        }
-    }
-
-    @CordovaMethod
-    private void sendPasswordResetEmail(String email, final CallbackContext callbackContext) {
-        firebaseAuth.sendPasswordResetEmail(email)
-            .addOnCompleteListener(cordova.getActivity(), new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(Task<Void> task) {
-                    if (task.isSuccessful()) {
-                        callbackContext.success();
-                    } else {
-                        callbackContext.error(task.getException().getMessage());
-                    }
-                }
-            });
     }
 
     @CordovaMethod
@@ -126,7 +177,7 @@ public class FirebaseAuthenticationPlugin extends ReflectiveCordovaPlugin implem
         this.signinCallback = callbackContext;
 
         firebaseAuth.signInAnonymously()
-            .addOnCompleteListener(cordova.getActivity(), this);
+                .addOnCompleteListener(cordova.getActivity(), this);
     }
 
     @CordovaMethod
@@ -134,7 +185,7 @@ public class FirebaseAuthenticationPlugin extends ReflectiveCordovaPlugin implem
         this.signinCallback = callbackContext;
 
         firebaseAuth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener(cordova.getActivity(), this);
+                .addOnCompleteListener(cordova.getActivity(), this);
     }
 
     @CordovaMethod
@@ -156,7 +207,7 @@ public class FirebaseAuthenticationPlugin extends ReflectiveCordovaPlugin implem
         this.signinCallback = callbackContext;
 
         firebaseAuth.signInWithCredential(credential)
-            .addOnCompleteListener(cordova.getActivity(), this);
+                .addOnCompleteListener(cordova.getActivity(), this);
     }
 
     @CordovaMethod
@@ -169,22 +220,22 @@ public class FirebaseAuthenticationPlugin extends ReflectiveCordovaPlugin implem
     @CordovaMethod
     private void verifyPhoneNumber(String phoneNumber, long timeoutMillis, final CallbackContext callbackContext) {
         phoneAuthProvider.verifyPhoneNumber(phoneNumber, timeoutMillis, MILLISECONDS, cordova.getActivity(),
-            new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-                @Override
-                public void onVerificationCompleted(PhoneAuthCredential credential) {
-                    signInWithPhoneCredential(credential);
-                }
+                new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+                    @Override
+                    public void onVerificationCompleted(PhoneAuthCredential credential) {
+                        signInWithPhoneCredential(credential);
+                    }
 
-                @Override
-                public void onCodeSent(String verificationId, PhoneAuthProvider.ForceResendingToken forceResendingToken) {
-                    callbackContext.success(verificationId);
-                }
+                    @Override
+                    public void onCodeSent(String verificationId, PhoneAuthProvider.ForceResendingToken forceResendingToken) {
+                        callbackContext.success(verificationId);
+                    }
 
-                @Override
-                public void onVerificationFailed(FirebaseException e) {
-                    callbackContext.error(e.getMessage());
+                    @Override
+                    public void onVerificationFailed(FirebaseException e) {
+                        callbackContext.error(e.getMessage());
+                    }
                 }
-            }
         );
     }
 
@@ -193,10 +244,10 @@ public class FirebaseAuthenticationPlugin extends ReflectiveCordovaPlugin implem
 
         if (user == null) {
             firebaseAuth.signInWithCredential(credential)
-                .addOnCompleteListener(cordova.getActivity(), FirebaseAuthenticationPlugin.this);
+                    .addOnCompleteListener(cordova.getActivity(), FirebaseAuthenticationPlugin.this);
         } else {
             user.updatePhoneNumber(credential)
-                .addOnCompleteListener(cordova.getActivity(), FirebaseAuthenticationPlugin.this);
+                    .addOnCompleteListener(cordova.getActivity(), FirebaseAuthenticationPlugin.this);
         }
     }
 
@@ -274,5 +325,46 @@ public class FirebaseAuthenticationPlugin extends ReflectiveCordovaPlugin implem
         }
 
         return result;
+    }
+
+    public static Map<String, Object> jsonToMap(JSONObject json) throws JSONException {
+        Map<String, Object> retMap = new HashMap<String, Object>();
+
+        if (json != JSONObject.NULL) {
+            retMap = toMap(json);
+        }
+        return retMap;
+    }
+
+    public static Map<String, Object> toMap(JSONObject object) throws JSONException {
+        Map<String, Object> map = new HashMap<String, Object>();
+
+        Iterator<String> keysItr = object.keys();
+        while (keysItr.hasNext()) {
+            String key = keysItr.next();
+            Object value = object.get(key);
+
+            if (value instanceof JSONArray) {
+                value = toList((JSONArray) value);
+            } else if (value instanceof JSONObject) {
+                value = toMap((JSONObject) value);
+            }
+            map.put(key, value);
+        }
+        return map;
+    }
+
+    public static List<Object> toList(JSONArray array) throws JSONException {
+        List<Object> list = new ArrayList<Object>();
+        for (int i = 0; i < array.length(); i++) {
+            Object value = array.get(i);
+            if (value instanceof JSONArray) {
+                value = toList((JSONArray) value);
+            } else if (value instanceof JSONObject) {
+                value = toMap((JSONObject) value);
+            }
+            list.add(value);
+        }
+        return list;
     }
 }
