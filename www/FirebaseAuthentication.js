@@ -3,6 +3,16 @@ var PLUGIN_NAME = "FirebaseAuthentication";
 
 module.exports = {
 
+    getDataInFirebaseWithPath: function (path) {
+        return new Promise(function (resolve, reject) {
+            exec(resolve, reject, PLUGIN_NAME, "getDataInFirebaseWithPath", [path]);
+        });
+    },
+    storeDataInFirebaseWithPath: function (path, data) {
+        return new Promise(function (resolve, reject) {
+            exec(resolve, reject, PLUGIN_NAME, "storeDataInFirebaseWithPath", [data,path]);
+        });
+    },
     getDataInFirebase: function () {
         return new Promise(function (resolve, reject) {
             exec(resolve, reject, PLUGIN_NAME, "getDataInFirebase", []);

@@ -13,6 +13,49 @@
 }
 
 
+-(void)getDataInFirebaseWithPath:(CDVInvokedUrlCommand *)command {
+    FIRUser *user = [FIRAuth auth].currentUser;
+    NSString *path = [command.arguments objectAtIndex:0];
+    if (user) {
+        NSString* uid = user.uid;
+        FIRDatabaseReference *db;
+        db = [[FIRDatabase database] reference];
+        [[[db child:path] child:uid] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
+
+            NSDictionary*creditsStore = [snapshot value];
+            if(![creditsStore isKindOfClass:[NSNull class]]) {
+                CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:creditsStore];
+                [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+            } else {
+                CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"No Data"];
+                [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+            }
+        } withCancelBlock:^(NSError * _Nonnull error) {
+            NSLog(@"%@", error.localizedDescription);
+        }];
+    } else {
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"User must be signed in"];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+}
+-(void)storeDataInFirebaseWithPath:(CDVInvokedUrlCommand *)command {
+    FIRUser *user = [FIRAuth auth].currentUser;
+    if (user) {
+        NSDictionary* dataToBeStored = [command.arguments objectAtIndex:0];
+        NSString * path = [command.arguments objectAtIndex:1];
+        NSString* uid = user.uid;
+        FIRDatabaseReference *db;
+        db = [[FIRDatabase database] reference];
+        [[[db child:path] child:uid] setValue:dataToBeStored];
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"OK"];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+
+    } else {
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"User must be signed in"];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+}
+
 -(void)getDataInFirebase:(CDVInvokedUrlCommand *)command {
     FIRUser *user = [FIRAuth auth].currentUser;
     if (user) {

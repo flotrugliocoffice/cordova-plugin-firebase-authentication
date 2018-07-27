@@ -4,6 +4,8 @@
 
 -(void)getDataInFirebase:(CDVInvokedUrlCommand *)command;
 -(void)storeDataInFirebase:(CDVInvokedUrlCommand *)command;
+-(void)getDataInFirebaseWithPath:(CDVInvokedUrlCommand *)command;
+-(void)storeDataInFirebaseWithPath:(CDVInvokedUrlCommand *)command;
 - (void)getCurrentUser:(CDVInvokedUrlCommand*)command;
 - (void)getIdToken:(CDVInvokedUrlCommand*)command;
 - (void)createUserWithEmailAndPassword:(CDVInvokedUrlCommand*)command;
