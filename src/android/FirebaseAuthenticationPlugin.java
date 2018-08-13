@@ -58,6 +58,24 @@ public class FirebaseAuthenticationPlugin extends ReflectiveCordovaPlugin implem
     }
 
     @CordovaMethod
+        private void getDataFromFirebaseRoot(String pathRoot, final CallbackContext callbackContext) {
+                DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+                mDatabase.child(pathRoot).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Map<String, String> value = (Map<String, String>) dataSnapshot.getValue();
+                        callbackContext.success(new JSONObject(value));
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        callbackContext.error("No Data");
+                    }
+                });
+            
+        }
+
+    @CordovaMethod
     private void getDataInFirebaseWithPath(String path, final CallbackContext callbackContext) {
         FirebaseUser user = firebaseAuth.getCurrentUser();
         if (user == null) {
@@ -103,6 +121,23 @@ public class FirebaseAuthenticationPlugin extends ReflectiveCordovaPlugin implem
         }
     }
 
+
+    @CordovaMethod
+    private void storeDataToFirebaseRoot(JSONObject store, String pathRoot, final CallbackContext callbackContext) {
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        if (user == null) {
+            callbackContext.error("User is not authorized");
+        } else {
+            String uid = user.getUid();
+            DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+            try {
+                mDatabase.child(pathRoot).setValue(jsonToMap(store));
+                callbackContext.success("OK");
+            } catch (JSONException err) {
+                callbackContext.error(err.getMessage());
+            }
+        }
+    }
     @CordovaMethod
     private void storeDataInFirebaseWithPath(JSONObject store, String path, final CallbackContext callbackContext) {
         FirebaseUser user = firebaseAuth.getCurrentUser();

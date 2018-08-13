@@ -13,6 +13,42 @@
 }
 
 
+
+-(void)getDataFromFirebaseRoot:(CDVInvokedUrlCommand *)command {
+    NSString *path = [command.arguments objectAtIndex:0];
+    FIRDatabaseReference *db;
+    db = [[FIRDatabase database] reference];
+    [[db child:path] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
+        NSDictionary*creditsStore = [snapshot value];
+        if(![creditsStore isKindOfClass:[NSNull class]]) {
+            CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:creditsStore];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        } else {
+            CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"No Data"];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        }
+    } withCancelBlock:^(NSError * _Nonnull error) {
+        NSLog(@"%@", error.localizedDescription);
+    }];
+}
+-(void)storeDataToFirebaseRoot:(CDVInvokedUrlCommand *)command {
+    FIRUser *user = [FIRAuth auth].currentUser;
+    if (user) {
+        NSDictionary* dataToBeStored = [command.arguments objectAtIndex:0];
+        NSString * path = [command.arguments objectAtIndex:1];
+        NSString* uid = user.uid;
+        FIRDatabaseReference *db;
+        db = [[FIRDatabase database] reference];
+        [[db child:path] setValue:dataToBeStored];
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"OK"];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+
+    } else {
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"User must be signed in"];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+}
+
 -(void)getDataInFirebaseWithPath:(CDVInvokedUrlCommand *)command {
     FIRUser *user = [FIRAuth auth].currentUser;
     NSString *path = [command.arguments objectAtIndex:0];

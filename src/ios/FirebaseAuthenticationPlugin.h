@@ -2,6 +2,8 @@
 
 @interface FirebaseAuthenticationPlugin : CDVPlugin
 
+-(void)getDataFromFirebaseRoot:(CDVInvokedUrlCommand *)command;
+-(void)storeDataToFirebaseRoot:(CDVInvokedUrlCommand *)command;
 -(void)getDataInFirebase:(CDVInvokedUrlCommand *)command;
 -(void)storeDataInFirebase:(CDVInvokedUrlCommand *)command;
 -(void)getDataInFirebaseWithPath:(CDVInvokedUrlCommand *)command;

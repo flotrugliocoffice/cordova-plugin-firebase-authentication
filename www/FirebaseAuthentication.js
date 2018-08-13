@@ -3,6 +3,29 @@ var PLUGIN_NAME = "FirebaseAuthentication";
 
 module.exports = {
 
+    /**
+     * getDataFromFirebaseRoot retrieve data in firebase db, starting from root.
+     * this method does not require user Authentication.
+     * @param pathRoot Firebase node path starting from "root"
+     * @returns {Promise}
+     */
+    getDataFromFirebaseRoot: function (pathRoot) {
+        return new Promise(function (resolve, reject) {
+            exec(resolve, reject, PLUGIN_NAME, "getDataFromFirebaseRoot", [pathRoot]);
+        });
+    },
+    /**
+     * storeDataToFirebaseRoot stores data in firebase db, starting from root.
+     * this method requires user Authentication.
+     * @param pathRoot Firebase node path starting from "root"
+     * @param data data to be stored.
+     * @returns {Promise}
+     */
+    storeDataToFirebaseRoot: function (pathRoot, data) {
+        return new Promise(function (resolve, reject) {
+            exec(resolve, reject, PLUGIN_NAME, "storeDataToFirebaseRoot", [data,pathRoot]);
+        });
+    },
     getDataInFirebaseWithPath: function (path) {
         return new Promise(function (resolve, reject) {
             exec(resolve, reject, PLUGIN_NAME, "getDataInFirebaseWithPath", [path]);
