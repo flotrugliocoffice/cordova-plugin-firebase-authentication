@@ -63,8 +63,21 @@ public class FirebaseAuthenticationPlugin extends ReflectiveCordovaPlugin implem
                 mDatabase.child(pathRoot).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        Map<String, String> value = (Map<String, String>) dataSnapshot.getValue();
-                        callbackContext.success(new JSONObject(value));
+                        Object val = dataSnapshot.getValue();
+                        if(val == null) {
+                            callbackContext.error("No Data");
+                            return;
+                        }
+                        if(val instanceof ArrayList) {
+                            JSONArray jRes = new JSONArray();
+                            for(Map<String, String> v : (ArrayList<Map<String, String>>)val) {
+                                jRes.put(new JSONObject(v));
+                            }
+                            callbackContext.success(jRes);
+                        } else {
+                            Map<String, String> value = (Map<String, String>)val;
+                            callbackContext.success(new JSONObject(value));
+                        }
                     }
 
                     @Override
@@ -86,8 +99,21 @@ public class FirebaseAuthenticationPlugin extends ReflectiveCordovaPlugin implem
             mDatabase.child(path).child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    Map<String, String> value = (Map<String, String>) dataSnapshot.getValue();
-                    callbackContext.success(new JSONObject(value));
+                    Object val = dataSnapshot.getValue();
+                    if(val == null) {
+                        callbackContext.error("No Data");
+                        return;
+                    }
+                    if(val instanceof ArrayList) {
+                        JSONArray jRes = new JSONArray();
+                        for(Map<String, String> v : (ArrayList<Map<String, String>>)val) {
+                            jRes.put(new JSONObject(v));
+                        }
+                        callbackContext.success(jRes);
+                    } else {
+                        Map<String, String> value = (Map<String, String>)val;
+                        callbackContext.success(new JSONObject(value));
+                    }
                 }
 
                 @Override
@@ -109,8 +135,21 @@ public class FirebaseAuthenticationPlugin extends ReflectiveCordovaPlugin implem
             mDatabase.child(path).child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    Map<String, String> value = (Map<String, String>) dataSnapshot.getValue();
-                    callbackContext.success(new JSONObject(value));
+                    Object val = dataSnapshot.getValue();
+                    if(val == null) {
+                        callbackContext.error("No Data");
+                        return;
+                    }
+                    if(val instanceof ArrayList) {
+                        JSONArray jRes = new JSONArray();
+                        for(Map<String, String> v : (ArrayList<Map<String, String>>)val) {
+                            jRes.put(new JSONObject(v));
+                        }
+                        callbackContext.success(jRes);
+                    } else {
+                        Map<String, String> value = (Map<String, String>)val;
+                        callbackContext.success(new JSONObject(value));
+                    }
                 }
 
                 @Override
