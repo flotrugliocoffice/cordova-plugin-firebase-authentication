@@ -68,6 +68,7 @@
         NSString* uid = user.uid;
         FIRDatabaseReference *db;
         db = [[FIRDatabase database] reference];
+        [[[db child:path] child:uid] keepSynced:YES]; //Keep synced all data from logged user...
         [[[db child:path] child:uid] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
 
             NSDictionary*creditsStore = [snapshot value];
@@ -95,6 +96,7 @@
         NSString* uid = user.uid;
         FIRDatabaseReference *db;
         db = [[FIRDatabase database] reference];
+        [[[db child:path] child:uid] keepSynced:YES]; //Keep synced all data from logged user...
         [[[db child:path] child:uid] setValue:dataToBeStored];
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"OK"];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -139,6 +141,7 @@
         NSString* uid = user.uid;
         FIRDatabaseReference *db;
         db = [[FIRDatabase database] reference];
+        [[[db child:@"credits"] child:uid] keepSynced:YES];
         [[[db child:@"credits"] child:uid] setValue:dataToBeStored];
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"OK"];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
