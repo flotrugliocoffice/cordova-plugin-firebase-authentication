@@ -6,15 +6,25 @@
 - (void)pluginInitialize {
     NSLog(@"Starting Firebase Authentication plugin");
 
+    [self checkFirebaseApp];
+}
+
+- (void) checkFirebaseApp {
     if(![FIRApp defaultApp]) {
+        NSLog(@"Firebase inited, not yet configured");
         [FIRApp configure];
         [FIRDatabase database].persistenceEnabled = YES;
     }
 }
 
-
+-(void)initFirebase:(CDVInvokedUrlCommand *)command {
+    [self checkFirebaseApp];
+    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:YES];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
 
 -(void)getDataFromFirebaseRoot:(CDVInvokedUrlCommand *)command {
+    [self checkFirebaseApp];
     NSString *path = [command.arguments objectAtIndex:0];
     FIRDatabaseReference *db;
     db = [[FIRDatabase database] reference];
@@ -32,6 +42,7 @@
     }];
 }
 -(void)storeDataToFirebaseRoot:(CDVInvokedUrlCommand *)command {
+    [self checkFirebaseApp];
     FIRUser *user = [FIRAuth auth].currentUser;
     if (user) {
         NSDictionary* dataToBeStored = [command.arguments objectAtIndex:0];
@@ -50,6 +61,7 @@
 }
 
 -(void)getDataInFirebaseWithPath:(CDVInvokedUrlCommand *)command {
+    [self checkFirebaseApp];
     FIRUser *user = [FIRAuth auth].currentUser;
     NSString *path = [command.arguments objectAtIndex:0];
     if (user) {
@@ -75,6 +87,7 @@
     }
 }
 -(void)storeDataInFirebaseWithPath:(CDVInvokedUrlCommand *)command {
+    [self checkFirebaseApp];
     FIRUser *user = [FIRAuth auth].currentUser;
     if (user) {
         NSDictionary* dataToBeStored = [command.arguments objectAtIndex:0];
@@ -93,11 +106,13 @@
 }
 
 -(void)getDataInFirebase:(CDVInvokedUrlCommand *)command {
+    [self checkFirebaseApp];
     FIRUser *user = [FIRAuth auth].currentUser;
     if (user) {
         NSString* uid = user.uid;
         FIRDatabaseReference *db;
         db = [[FIRDatabase database] reference];
+        [[[db child:@"credits"] child:uid] keepSynced:YES];
         [[[db child:@"credits"] child:uid] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
 
             NSDictionary*creditsStore = [snapshot value];
@@ -117,6 +132,7 @@
     }
 }
 -(void)storeDataInFirebase:(CDVInvokedUrlCommand *)command {
+    [self checkFirebaseApp];
     FIRUser *user = [FIRAuth auth].currentUser;
     if (user) {
         NSDictionary* dataToBeStored = [command.arguments objectAtIndex:0];
@@ -134,6 +150,7 @@
 }
 
 - (void)getCurrentUser:(CDVInvokedUrlCommand *)command {
+    [self checkFirebaseApp];
     FIRUser *user = [FIRAuth auth].currentUser;
     if (user) {
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[self userToDictionary:user]];
@@ -145,6 +162,7 @@
 }
 
 - (void)getIdToken:(CDVInvokedUrlCommand *)command {
+    [self checkFirebaseApp];
     BOOL forceRefresh = [[command.arguments objectAtIndex:0] boolValue];
     FIRUser *user = [FIRAuth auth].currentUser;
 
@@ -166,6 +184,7 @@
 }
 
 - (void)createUserWithEmailAndPassword:(CDVInvokedUrlCommand *)command {
+    [self checkFirebaseApp];
     NSString* email = [command.arguments objectAtIndex:0];
     NSString* password = [command.arguments objectAtIndex:1];
 
@@ -178,6 +197,7 @@
 }
 
 - (void)sendEmailVerification:(CDVInvokedUrlCommand *)command {
+    [self checkFirebaseApp];
     FIRUser *currentUser = [FIRAuth auth].currentUser;
 
     if (currentUser) {
@@ -198,6 +218,7 @@
 }
 
 - (void)sendPasswordResetEmail:(CDVInvokedUrlCommand *)command {
+    [self checkFirebaseApp];
     NSString* email = [command.arguments objectAtIndex:0];
 
     [[FIRAuth auth] sendPasswordResetWithEmail:email completion:^(NSError *_Nullable error) {
@@ -213,6 +234,7 @@
 }
 
 - (void)signInWithEmailAndPassword:(CDVInvokedUrlCommand *)command {
+    [self checkFirebaseApp];
     NSString* email = [command.arguments objectAtIndex:0];
     NSString* password = [command.arguments objectAtIndex:1];
 
@@ -225,6 +247,7 @@
 }
 
 - (void)signInAnonymously:(CDVInvokedUrlCommand *)command {
+    [self checkFirebaseApp];
     [[FIRAuth auth] signInAnonymouslyWithCompletion:^(FIRAuthDataResult *result, NSError *error) {
         [self.commandDelegate sendPluginResult:[self createAuthResult:result
                                                             withError:error] callbackId:command.callbackId];
@@ -232,6 +255,7 @@
 }
 
 - (void)signInWithGoogle:(CDVInvokedUrlCommand *)command {
+    [self checkFirebaseApp];
     NSString* idToken = [command.arguments objectAtIndex:0];
     NSString* accessToken = [command.arguments objectAtIndex:1];
 
@@ -247,6 +271,7 @@
 }
 
 - (void)signInWithFacebook:(CDVInvokedUrlCommand *)command {
+    [self checkFirebaseApp];
     NSString* accessToken = [command.arguments objectAtIndex:0];
 
     FIRAuthCredential *credential =
@@ -260,6 +285,7 @@
 }
 
 - (void)signInWithTwitter:(CDVInvokedUrlCommand *)command {
+    [self checkFirebaseApp];
     NSString* token = [command.arguments objectAtIndex:0];
     NSString* secret = [command.arguments objectAtIndex:1];
 
@@ -275,6 +301,7 @@
 }
 
 - (void)signInWithVerificationId:(CDVInvokedUrlCommand*)command {
+    [self checkFirebaseApp];
     NSString* verificationId = [command.arguments objectAtIndex:0];
     NSString* smsCode = [command.arguments objectAtIndex:1];
 
@@ -290,6 +317,7 @@
 }
 
 - (void)verifyPhoneNumber:(CDVInvokedUrlCommand*)command {
+    [self checkFirebaseApp];
     NSString* phoneNumber = [command.arguments objectAtIndex:0];
 
     [[FIRPhoneAuthProvider provider] verifyPhoneNumber:phoneNumber
@@ -307,6 +335,7 @@
 }
 
 - (void)signOut:(CDVInvokedUrlCommand*)command {
+    [self checkFirebaseApp];
     NSError *signOutError;
     CDVPluginResult *pluginResult;
 
@@ -320,6 +349,7 @@
 }
 
 - (void)setLanguageCode:(CDVInvokedUrlCommand*)command {
+    [self checkFirebaseApp];
     NSString* languageCode = [command.arguments objectAtIndex:0];
     if (languageCode) {
         [FIRAuth auth].languageCode = languageCode;
@@ -332,6 +362,7 @@
 }
 
 - (CDVPluginResult*) createAuthResult:(FIRAuthDataResult*)result withError:(NSError*)error {
+    [self checkFirebaseApp];
     CDVPluginResult *pluginResult;
     if (error) {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error.localizedDescription];

@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-firebase-authentication-db",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "Cordova plugin for Firebase Authentication and DatabaseStorage",
   "cordova": {
     "id": "cordova-plugin-firebase-authentication-db",

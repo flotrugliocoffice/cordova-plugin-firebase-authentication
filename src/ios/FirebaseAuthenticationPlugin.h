@@ -22,5 +22,6 @@
 - (void)verifyPhoneNumber:(CDVInvokedUrlCommand*)command;
 - (void)signOut:(CDVInvokedUrlCommand*)command;
 - (void)setLanguageCode:(CDVInvokedUrlCommand*)command;
+- (void)initFirebase:(CDVInvokedUrlCommand *)command;
 
 @end

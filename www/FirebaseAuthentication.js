@@ -2,7 +2,11 @@ var exec = require("cordova/exec");
 var PLUGIN_NAME = "FirebaseAuthentication";
 
 module.exports = {
-
+    initFirebase: function () {
+        return new Promise(function (resolve, reject) {
+            exec(resolve, reject, PLUGIN_NAME, "initFirebase", []);
+        });
+    },
     /**
      * getDataFromFirebaseRoot retrieve data in firebase db, starting from root.
      * this method does not require user Authentication.
@@ -23,7 +27,7 @@ module.exports = {
      */
     storeDataToFirebaseRoot: function (pathRoot, data) {
         return new Promise(function (resolve, reject) {
-            exec(resolve, reject, PLUGIN_NAME, "storeDataToFirebaseRoot", [data,pathRoot]);
+            exec(resolve, reject, PLUGIN_NAME, "storeDataToFirebaseRoot", [data, pathRoot]);
         });
     },
     getDataInFirebaseWithPath: function (path) {
@@ -33,7 +37,7 @@ module.exports = {
     },
     storeDataInFirebaseWithPath: function (path, data) {
         return new Promise(function (resolve, reject) {
-            exec(resolve, reject, PLUGIN_NAME, "storeDataInFirebaseWithPath", [data,path]);
+            exec(resolve, reject, PLUGIN_NAME, "storeDataInFirebaseWithPath", [data, path]);
         });
     },
     getDataInFirebase: function () {
