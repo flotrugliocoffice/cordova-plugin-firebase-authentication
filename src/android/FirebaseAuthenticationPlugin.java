@@ -96,6 +96,7 @@ public class FirebaseAuthenticationPlugin extends ReflectiveCordovaPlugin implem
         } else {
             String uid = user.getUid();
             DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+            mDatabase.child(path).child(uid).keepSynced(true);
             mDatabase.child(path).child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -186,6 +187,7 @@ public class FirebaseAuthenticationPlugin extends ReflectiveCordovaPlugin implem
             String uid = user.getUid();
             DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
             try {
+                mDatabase.child(path).child(uid).keepSynced(true);
                 mDatabase.child(path).child(uid).setValue(jsonToMap(store));
                 callbackContext.success("OK");
             } catch (JSONException err) {
@@ -202,6 +204,7 @@ public class FirebaseAuthenticationPlugin extends ReflectiveCordovaPlugin implem
             String uid = user.getUid();
             DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
             try {
+                mDatabase.child("credits").child(uid).keepSynced(true);
                 mDatabase.child("credits").child(uid).setValue(jsonToMap(store));
                 callbackContext.success("OK");
             } catch (JSONException err) {
