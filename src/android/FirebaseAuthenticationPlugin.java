@@ -52,9 +52,20 @@ public class FirebaseAuthenticationPlugin extends ReflectiveCordovaPlugin implem
     @Override
     protected void pluginInitialize() {
         Log.d(TAG, "[Coffice] Starting Firebase Authentication plugin");
+        this.checkFirebaseApp();
+    }
+
+
+    private void checkFirebaseApp() {
         this.firebaseAuth = FirebaseAuth.getInstance();
         this.phoneAuthProvider = PhoneAuthProvider.getInstance();
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+    }
+
+    @CordovaMethod
+    private void initFirebase(final CallbackContext callbackContext) {
+        this.checkFirebaseApp();
+        callbackContext.success();
     }
 
     @CordovaMethod
